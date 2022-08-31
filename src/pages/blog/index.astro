@@ -1,0 +1,15 @@
+---
+import TweetCard from "../../components/TweetCard.astro";
+
+const posts = await Astro.glob("./*.mdx");
+---
+
+<TweetCard />
+{
+    posts.map((post) => (
+        <Fragment>
+            <h2>{post.frontmatter.title}</h2>
+            <time>{post.frontmatter.publish_date}</time>
+        </Fragment>
+    ))
+}

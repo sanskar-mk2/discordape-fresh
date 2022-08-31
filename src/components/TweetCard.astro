@@ -1,0 +1,51 @@
+---
+import dayjs from "dayjs";
+const { url, force = false } = Astro.props;
+import { Image } from "@astrojs/image/components";
+const { API_ROOT } = import.meta.env;
+const fetch_url = `${API_ROOT}/tweet?url=${url}&force=${force}`;
+const resp = await fetch(fetch_url);
+const data = await resp.json();
+const {
+    url: link,
+    text,
+    created_at: timestamp,
+    source,
+    author_name: author,
+    author_url,
+    author_handle: handle,
+    author_image,
+    retweet_count,
+    quote_count,
+    like_count,
+} = data;
+console.log(data);
+
+const image_url = `${API_ROOT}${author_image}`;
+---
+
+<blockquote
+    class="not-italic prose border-primary card shadow-xl bg-secondary pb-8 rounded"
+>
+    <a href={author_url}>
+        <div class="flex gap-2 h-fit items-center">
+            <Image
+                class="rounded-full"
+                src={image_url}
+                width={64}
+                height={64}
+            />
+            <div>
+                <h5 class="font-bold">{author}</h5>
+                <h6>@{handle}</h6>
+            </div>
+        </div>
+    </a>
+    <a href={link} class="no-underline" target="_blank">{text}</a>
+    <small class="mt-2">{dayjs(timestamp).format("h:mm A · MMM D, YYYY")} · {source}</small>
+    <div class="mt-2 not-italic flex gap-6">
+        <text><span class="font-bold">{retweet_count}</span> Retweets</text>
+        <text><span class="font-bold">{quote_count}</span> Quote Tweets</text>
+        <text><span class="font-bold">{like_count}</span> Likes</text>
+    </div>
+</blockquote>
